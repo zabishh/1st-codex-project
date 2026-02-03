@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Day | Todo + Pomodoro</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <main class="wrap">
+    <header class="hero">
+      <div class="hero__text">
+        <p class="kicker">Local-only • Study check-in</p>
+        <h1>Did I study today?</h1>
+        <p class="sub">Track subjects, capture sessions, and run a built-in Pomodoro. Everything stays on this device.</p>
+      </div>
+      <div class="hero__badge" aria-hidden="true">
+        <span class="day" id="today"></span>
+        <span class="date" id="todayDate"></span>
+      </div>
+    </header>
+
+    <section class="top-grid">
+
+    <section class="card" id="panelMotivation">
+      <div class="panel__head">
+        <h2>Motivation</h2>
+      </div>
+      <blockquote id="quoteText" class="quote"></blockquote>
+    </section>
+
+    <section class="card" id="panelThesaurus">
+      <div class="panel__head">
+        <h2>Thesaurus</h2>
+      </div>
+      <form id="thesaurusForm" class="form">
+        <div class="field">
+          <label for="thesaurusQuery">Search a word</label>
+          <input id="thesaurusQuery" name="thesaurusQuery" type="text" placeholder="e.g., focus, study, calm" required />
+        </div>
+        <button class="btn btn--ghost" type="submit">Find synonyms</button>
+      </form>
+      <div id="thesaurusResults" class="thesaurus__results"></div>
+      <p class="hint">Powered by Merriam-Webster Thesaurus. Add MW_THESAURUS_KEY to .env, run `python proxy.py`, then open http://localhost:5173.</p>
+    </section>
+    </section>
+
+<section class="card grid">
+      <div class="panel" id="panelPlan">
+        <div class="panel__head">
+          <h2>Today's Plan</h2>
+          <div class="chip" id="studyStatus">Not Studied</div>
+        </div>
+
+        <form id="todoForm" class="form">
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input id="subject" name="subject" type="text" placeholder="e.g., Math, Physics, History" required />
+          </div>
+          <div class="field">
+            <label for="task">What will you study?</label>
+            <input id="task" name="task" type="text" placeholder="Chapter, problem set, notes..." required />
+          </div>
+          <div class="field">
+            <label for="minutes">Pomodoro length (minutes)</label>
+            <input id="minutes" name="minutes" type="number" min="1" step="1" value="25" />
+          </div>
+          <button class="btn" type="submit">Add to Today</button>
+        </form>
+
+        <div class="presets">
+          <div class="panel__head">
+            <h3>Subject Presets</h3>
+          </div>
+          <form id="presetForm" class="form preset__form">
+            <div class="field">
+              <label for="presetSubject">Subject</label>
+              <input id="presetSubject" name="presetSubject" type="text" placeholder="e.g., Biology" required />
+            </div>
+            <div class="field">
+              <label for="presetMinutes">Default focus (minutes)</label>
+              <input id="presetMinutes" name="presetMinutes" type="number" min="1" step="1" value="25" />
+            </div>
+            <button class="btn btn--ghost" type="submit">Save preset</button>
+          </form>
+          <div id="presetList" class="preset__list"></div>
+        </div>
+
+        <ul id="todoList" class="todo" aria-live="polite"></ul>
+        <p class="hint">Mark items done to count toward "Studied Today".</p>
+      </div>
+
+      <div class="panel" id="panelTimer">
+        <div class="panel__head">
+          <h2>Pomodoro</h2>
+          <div class="chip chip--alt" id="timerMode">Focus</div>
+        </div>
+
+        <div class="timer">
+          <div class="timer__ring" role="img" aria-label="Pomodoro progress">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="54" class="ring__bg"></circle>
+              <circle cx="60" cy="60" r="54" class="ring__fg" id="ring"></circle>
+            </svg>
+            <div class="timer__display" id="timeDisplay">25:00</div>
+          </div>
+        </div>
+
+        <div class="timer__controls">
+          <button class="btn btn--ghost" id="startBtn">Start</button>
+          <button class="btn btn--ghost" id="pauseBtn" disabled>Pause</button>
+          <button class="btn btn--ghost" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="timer__settings">
+          <div class="field">
+            <label for="focusMinutes">Study time (minutes)</label>
+            <input id="focusMinutes" name="focusMinutes" type="number" min="1" step="1" value="25" />
+          </div>
+          <div class="field">
+            <label for="breakMinutes">Rest time (minutes)</label>
+            <input id="breakMinutes" name="breakMinutes" type="number" min="1" step="1" value="5" />
+          </div>
+          <div class="field">
+            <label for="longBreakMinutes">Long break (minutes)</label>
+            <input id="longBreakMinutes" name="longBreakMinutes" type="number" min="1" step="1" value="15" />
+          </div>
+          <div class="field">
+            <label for="longBreakEvery">Long break after (sessions)</label>
+            <input id="longBreakEvery" name="longBreakEvery" type="number" min="2" step="1" value="4" />
+          </div>
+          <button class="btn btn--ghost" id="applyTimer">Update timer</button>
+        </div>
+
+        <div class="timer__meta">
+          <label class="toggle">
+            <input type="checkbox" id="autoBreak" checked />
+            <span>Auto break (uses rest time)</span>
+          </label>
+          <div class="session">Sessions today: <strong id="sessionCount">0</strong></div>
+        </div>
+
+        <div class="alerts">
+          <h3>Alerts</h3>
+          <label class="toggle">
+            <input type="checkbox" id="soundEnabled" checked />
+            <span>Sound</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="vibrateEnabled" />
+            <span>Vibrate (mobile)</span>
+          </label>
+          <div class="field">
+            <label for="alarmVolume">Alarm volume</label>
+            <input id="alarmVolume" type="range" min="0" max="100" step="5" value="60" />
+          </div>
+        </div>
+
+        <div class="focus-mode">
+          <button class="btn" id="deepFocusBtn" type="button">Deep Focus Mode</button>
+          <p class="hint">Hides everything except the timer and current subject.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card log" id="panelTimeline">
+      <div class="panel__head">
+        <h2>Timeline (Today)</h2>
+        <div class="chip" id="todayFocusTotal">0 min</div>
+      </div>
+      <div id="timelineList" class="log__list"></div>
+      <p class="hint">Starts when you press Start and logs focus/breaks.</p>
+    </section>
+
+    <section class="card log" id="panelLog">
+      <h2>Study Log</h2>
+      <div id="logList" class="log__list"></div>
+      <p class="hint">This log is saved locally in your browser storage.</p>
+    </section>
+
+    <section class="card" id="panelRecap">
+      <div class="panel__head">
+        <h2>Weekly Recap</h2>
+        <div class="chip chip--alt" id="weekStreak">Streak: 0</div>
+      </div>
+      <div class="recap" id="recapStats"></div>
+      <div class="recap" id="recapSubjects"></div>
+    </section>
+
+    <section class="card" id="panelData">
+      <div class="panel__head">
+        <h2>Backup</h2>
+      </div>
+      <div class="data">
+        <button class="btn btn--ghost" id="exportBtn" type="button">Export JSON</button>
+        <label class="btn btn--ghost" for="importFile">Import JSON</label>
+        <input id="importFile" type="file" accept="application/json" hidden />
+        <button class="btn btn--ghost" id="clearBtn" type="button">Clear Data</button>
+      </div>
+    </section>
+</main>
+
+  <script src="app.js"></script>
+</body>
+</html>
