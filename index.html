@@ -42,7 +42,7 @@
         <button class="btn btn--ghost" type="submit">Find synonyms</button>
       </form>
       <div id="thesaurusResults" class="thesaurus__results"></div>
-      <p class="hint">Powered by Merriam-Webster Thesaurus. Add MW_THESAURUS_KEY to .env, run `python proxy.py`, then open http://localhost:5173.</p>
+      <p class="hint">Powered by Merriam-Webster Thesaurus. For GitHub Pages, set THESAURUS_PROXY_URL to your Render URL. Local use: add MW_THESAURUS_KEY to .env, run `python proxy.py`, open http://localhost:5173.</p>
     </section>
     </section>
 
@@ -201,6 +201,7 @@
     </section>
 </main>
 
+  <script>window.THESAURUS_PROXY_URL = ;</script>
   <script src="app.js"></script>
 </body>
 </html>

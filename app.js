@@ -1,5 +1,5 @@
 const storeKey = "study_todo_pomodoro_v2";
-const THESAURUS_API_URL = "/api/thesaurus";
+const THESAURUS_API_URL = window.THESAURUS_PROXY_URL || (window.location.hostname.endsWith("github.io") ? "" : "/api/thesaurus");
 
 const el = {
   today: document.getElementById("today"),
@@ -611,6 +611,9 @@ function hydrateFromState() {
 }
 
 async function fetchThesaurus(query) {
+  if (!THESAURUS_API_URL) {
+    throw new Error("Set THESAURUS_PROXY_URL in index.html for GitHub Pages.");
+  }
   if (window.location.protocol === "file:") {
     throw new Error("Run the local server (python proxy.py) for thesaurus.");
   }
